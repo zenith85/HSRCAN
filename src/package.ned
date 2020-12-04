@@ -1,0 +1,3 @@
+package hsrcan;
+
+@license(LGPL);
