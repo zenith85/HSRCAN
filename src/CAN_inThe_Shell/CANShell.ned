@@ -17,22 +17,26 @@ package hsrcan.CAN_inThe_Shell;
 
 module CANshell
 {
-    @display("bgb=2022.3899,738.99;i=block/ifcard;bgi=background/CANfullframe");
+    @display("bgb=950,300,white;i=block/ifcard;bgi=background/CANfullframe");
     bool Sender; // this parameter should be changed in the NED to deicde if send or not
     int ID;// this is the ID number of the node
     gates:
         //these are the gates of the parents the shell
-        input CAN_phy_in;
-        output CAN_phy_out;
+        //input CAN_phy_in;
+        //output CAN_phy_out;
+        inout phy_interface;
 
     types:
         simple CANLogic
         {
             @display("i=abstract/dispatcher");
             gates:
-                input CANlogic_outbound_in;
-                output CANlogic_outbound_out;
+                //input CANlogic_outbound_in;
+                //output CANlogic_outbound_out;
+                inout CANLogicInterface;
+
                 input CANlogic_inbound_in;
+
                 output CANlogic_inbound_out;
         }
 
@@ -85,25 +89,25 @@ module CANshell
 
     submodules:
         canLogic: CANLogic {
-            @display("p=1235.7899,476.09998");
+            @display("p=867,230");
         }
         arbiter: Arbiter {
-            @display("p=275.31,291.87");
+            @display("p=146,171");
         }
         data: Data {
-            @display("p=925.29,291.87");
+            @display("p=453,171");
         }
         control: Control {
-            @display("p=596.16,291.87");
+            @display("p=315,171");
         }
         crc: CRC {
-            @display("p=1254.4199,291.87");
+            @display("p=688,171");
         }
         ender: Ender {
-            @display("p=1848.5099,291.87");
+            @display("p=867,171");
         }
         sink: SINK {
-            @display("p=844.56,476.09998");
+            @display("p=718,230");
         }
     connections:
         arbiter.Arbiter_out --> control.Control_in;
@@ -111,7 +115,8 @@ module CANshell
         data.Data_out --> crc.CRC_in;
         crc.CRC_out --> ender.Ender_in;
         ender.Ender_out --> canLogic.CANlogic_inbound_in;
-        canLogic.CANlogic_outbound_out --> CAN_phy_out;
-        CAN_phy_in --> canLogic.CANlogic_outbound_in;
+        //canLogic.CANlogic_outbound_out --> CAN_phy_out;
+        //CAN_phy_in --> canLogic.CANlogic_outbound_in;
         canLogic.CANlogic_inbound_out --> sink.SINK_in;
+        canLogic.CANLogicInterface <--> phy_interface;
 }

@@ -13,17 +13,20 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package hsrcan;
+package hsrcan.simulations;
 
+import hsrcan.CAN_inThe_Shell.CANBus;
 import hsrcan.CAN_inThe_Shell.CANshell;
+
+
 
 
 //
 // TODO auto-generated type
 //
-network Node
+network CAN_SIM
 {
-    @display("bgb=790,549");
+    @display("bgb=790,549,#408080");
     types:
         simple CAN_Node
         {
@@ -33,15 +36,21 @@ network Node
         }
 
     submodules:
-        N2: CAN_Node {
-            @display("p=115.024,276.5");
-        }
         caNshell: CANshell {
             @display("p=496.594,190.232");
             Sender = true;
             ID = 1;
         }
+        canBus: CANBus {
+            @display("p=376.04,346.178");
+            CON_NUM = 2;
+        }
+        caNshell1: CANshell {
+            @display("p=222.306,190.232");
+            Sender = false;
+            ID = 2;
+        }
     connections:
-        caNshell.CAN_phy_out --> {delay=100ms;} --> N2.input_gate;
-        N2.output_gate --> {delay=100ms;} --> caNshell.CAN_phy_in;
+        canBus.CANBus_inout++ <--> caNshell.phy_interface;
+        canBus.CANBus_inout++ <--> caNshell1.phy_interface;
 }
