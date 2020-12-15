@@ -30,7 +30,7 @@ PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/CAN_Node.o $O/CAN_inThe_Shell/CANBus.o $O/CAN_inThe_Shell/CANShell.o
+OBJS = $O/CAN_Node.o $O/CAN_inThe_Shell/CANBus.o $O/CAN_inThe_Shell/CANShell.o $O/CAN_inThe_Shell/junctionNode.o
 
 # Message files
 MSGFILES =

@@ -17,6 +17,7 @@ package hsrcan.simulations;
 
 import hsrcan.CAN_inThe_Shell.CANBus;
 import hsrcan.CAN_inThe_Shell.CANshell;
+import hsrcan.CAN_inThe_Shell.JunctionNode;
 
 
 
@@ -26,7 +27,8 @@ import hsrcan.CAN_inThe_Shell.CANshell;
 //
 network CAN_SIM
 {
-    @display("bgb=790,549,#408080");
+    @display("bgb=1031.9563,468.96,#408080;bgi=background/car");
+
     types:
         simple CAN_Node
         {
@@ -37,20 +39,65 @@ network CAN_SIM
 
     submodules:
         caNshell: CANshell {
-            @display("p=496.594,190.232");
+            @display("p=908.2125,177.24376");
             Sender = true;
-            ID = 1;
+            ID = 0;
         }
         canBus: CANBus {
-            @display("p=376.04,346.178");
-            CON_NUM = 2;
+            @display("p=292.3875,214.76251");
         }
         caNshell1: CANshell {
-            @display("p=222.306,190.232");
+            @display("p=155.25,302.73752");
+            Sender = false;
+            ID = 1;
+        }
+        Socket4: JunctionNode {
+            @display("p=908.2125,288.50626");
+            Delay = 0.003;
+        }
+        caNshell3: CANshell {
+            @display("p=908.2125,386.83127");
+            Sender = false;
+            ID = 3;
+        }
+        Socket1: JunctionNode {
+            @display("p=371.30627,288.50626");
+            Delay = 0.03;
+        }
+        caNshell2: CANshell {
+            @display("p=371.30627,139.725");
             Sender = false;
             ID = 2;
         }
+        caNshell4: CANshell {
+            @display("p=291.09375,363.54376");
+            Sender = false;
+            ID = 5;
+        }
+        Socket3: JunctionNode {
+            @display("p=155.25,217.35");
+        }
+        Socket5: JunctionNode {
+            @display("p=291.09375,139.725");
+        }
+        Socket2: JunctionNode {
+            @display("p=371.30627,349.3125");
+        }
+        caNshell5: CANshell {
+            @display("p=464.45627,349.3125");
+            Sender = false;
+            ID = 5;
+        }
     connections:
-        canBus.CANBus_inout++ <--> caNshell.phy_interface;
-        canBus.CANBus_inout++ <--> caNshell1.phy_interface;
+        caNshell.phy_interface <--> Socket4.JunctionInterface++;
+        Socket4.JunctionInterface++ <--> caNshell3.phy_interface;
+        Socket4.JunctionInterface++ <--> Socket1.JunctionInterface++;
+        Socket1.JunctionInterface++ <--> canBus.CANBus_inout++;
+        canBus.CANBus_inout++ <--> Socket5.JunctionInterface++;
+        Socket5.JunctionInterface++ <--> caNshell2.phy_interface;
+        canBus.CANBus_inout++ <--> Socket3.JunctionInterface++;
+        Socket3.JunctionInterface++ <--> caNshell1.phy_interface;
+        caNshell4.phy_interface <--> canBus.CANBus_inout++;
+        caNshell5.phy_interface <--> Socket2.JunctionInterface++;
+        Socket2.JunctionInterface++ <--> Socket1.JunctionInterface++;
 }

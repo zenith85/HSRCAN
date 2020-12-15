@@ -13,41 +13,33 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package hsrcan.CAN_inThe_Shell;
+package hsrcan.simulations;
+import hsrcan.CAN_inThe_Shell.CANBus;
+import hsrcan.CAN_inThe_Shell.CANshell;
+
+
 //
 // TODO documentation
 //
-module CANBus
+network CAN_SIM_SIMPLE
 {
-    @display("i=block/transport;bgb=319,269");
-    //@display("t=CAN BUS");
-
-    //@display("t=Packets sent: 18;tt=Additional tooltip information");
-	//@display("t=0");
-    int BER;
-    double Delay;
-    gates:
-
-        inout CANBus_inout[];
-
-    types:
-        simple SimpCANBus
-        {
-            @display("i=block/layer");
-            gates:
-                inout SCANB_interface[];
-        }
-
+    @display("bgb=680,459");
     submodules:
-
-        simpcanbus: SimpCANBus {
-            @display("p=153,109");
+        caNshell: CANshell {
+            @display("p=553,197");
+            Sender = true;
+            ID = 1;
+        }
+        caNshell1: CANshell {
+            @display("p=170,200");
+            Sender = false;
+            ID = 2;
+        }
+        canBus: CANBus {
+            @display("p=356,199");
         }
     connections:
-        for i=0..sizeof(CANBus_inout)-1 {
-            simpcanbus.SCANB_interface++ <--> {  delay = 5ms; } <--> CANBus_inout[i];
-        }
-
-
+        caNshell.phy_interface <--> canBus.CANBus_inout++;
+        caNshell1.phy_interface <--> canBus.CANBus_inout++;
 }
 

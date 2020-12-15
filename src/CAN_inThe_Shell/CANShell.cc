@@ -21,21 +21,6 @@ bool ack_slot_bit=0;             //ack slot bit 1 bit                           
 bool delimitter=0;               //delimitter 1 bit                                             type of bool 1 bit
 unsigned char eeof=127;          //End of frame 7 bits                                          type of char 8 bits
 
-//declare public received variables
-//bool R_sof=0;                      //sof is the start of the frame 0 is true 1 is false           type of bool 1 bit
-//unsigned short R_Arbiter;           //arbit taken from the nod ID in the NED
-//unsigned char R_control=0;         //Control is an 7 bits modifier                                type of char 8 bits
-//long long R_data=0;                //Data is 1 to 8 bytes or 8x8=64 bits maximum                  type of long long 64 bits
-//unsigned short R_crc=0;            //CRC field 15 bits                                            type of shorts 16  bits
-//bool R_ack_slot_bit=0;             //ack slot bit 1 bit                                           type of bool 1 bit
-//bool R_delimitter=0;               //delimitter 1 bit                                             type of bool 1 bit
-//unsigned char R_eeof=0;            //End of frame 7 bits                                          type of char 8 bits
-
-int messages_received=0;
-int frame_sent=0;
-int errors_received=0;
-int bits=0;
-
 //call and use all the omnetpp libraries
 //bool sender_permission;
 class CANphy: public cModule {
@@ -95,6 +80,9 @@ void msgreport()
 
 void CANLogic::initialize() {
 
+    char buf[40];
+    sprintf(buf, "rcvd: %ld sent: %ld error: %ld", framesrcvd, framesent,errorsdetected);
+    getParentModule()->getDisplayString().setTagArg("t",0,buf);
 }
 
 void Arbiter::initialize() {
@@ -138,24 +126,24 @@ void Ender::handleMessage(cMessage *msg) {
 }
 void SINK::handleMessage(cMessage *msg) {
     //how many messages are received
-    if (strcmp(msg->getName(),"Success"))
+    if (strcmp(msg->getName(),"Success")==0)
     {
-
-        messages_received+=1;
-
+        //messages_received+=1;
+        this->getParentModule()->par("messages_received").setIntValue(this->getParentModule()->par("messages_received").intValue()+1);
     }else
     {
-        errors_received+=1;
-
+        //errors_received+=1;
+        this->getParentModule()->par("errors_received").setIntValue(this->getParentModule()->par("errors_received").intValue()+1);
     }
 
     //messages_received+=1;
 
     //display update
-    framesrcvd=messages_received;
-    framesent=frame_sent;
+    framesrcvd=this->getParentModule()->par("messages_received").intValue();
+    framesent=this->getParentModule()->par("frame_sent").intValue();
+    errorsdetected=this->getParentModule()->par("errors_received").intValue();
     char buf[40];
-    sprintf(buf, "rcvd: %ld sent: %ld", framesrcvd, framesent);
+    sprintf(buf, "rcvd: %ld sent: %ld error: %ld", framesrcvd, framesent,errorsdetected);
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
 
 }
@@ -165,14 +153,16 @@ void SINK::finish()
     EV<<this->getParentModule()->getName();
     EV<<"(";
     //EV<<this->par("msgrcvd").intValue();
-    EV<< messages_received;
+    //EV<< messages_received;
     EV<<")";
 }
 //Serial Peripheral Interface for sending out
 cMessage *SPI_OUT(cMessage *msg, const char *par, int offset)
 {
     cMessage *dom_res = new cMessage("");
-    frame_sent+=1;
+
+    //frame_sent+=1;
+
 
     if ((msg->par(par).longValue()>>offset)&1)
     {
@@ -198,6 +188,7 @@ void CANLogic::handleMessage(cMessage *msg) {
         //1. send the sof
         for (int i=0;i<1;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgSOF_1b", i),"CANLogicInterface$o");
             // msgreport();
 
@@ -205,6 +196,7 @@ void CANLogic::handleMessage(cMessage *msg) {
         //2. send the arbitration
         for (int i=0;i<11;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgID_11b", i),"CANLogicInterface$o");
             //msgreport();
         }
@@ -212,12 +204,14 @@ void CANLogic::handleMessage(cMessage *msg) {
         //3. send the control
         for (int i=0;i<7;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgControl_7b",i),"CANLogicInterface$o");
             // msgreport();
         }
         //4. send the data
         for (int i=0;i<64;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgData_8B",i),"CANLogicInterface$o");
             //msgreport();
         }
@@ -225,6 +219,7 @@ void CANLogic::handleMessage(cMessage *msg) {
 
         for (int i=0;i<15;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgCRC_15b",i),"CANLogicInterface$o");
             //msgreport();
         }
@@ -232,6 +227,7 @@ void CANLogic::handleMessage(cMessage *msg) {
         //6. send the ack
         for (int i=0;i<1;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgACK_1b",i),"CANLogicInterface$o");
             // msgreport();
         }
@@ -239,6 +235,7 @@ void CANLogic::handleMessage(cMessage *msg) {
         //7. send the delimitter
         for (int i=0;i<1;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgDEL_1b",i),"CANLogicInterface$o");
             //msgreport();
         }
@@ -247,14 +244,16 @@ void CANLogic::handleMessage(cMessage *msg) {
         SPI_OUT(msg, "msgEOF_7b", 7);
         for (int i=0;i<7;i++)
         {
+            this->getParentModule()->par("frame_sent").setIntValue(this->getParentModule()->par("frame_sent").intValue()+1);
             send(SPI_OUT(msg, "msgEOF_7b",i),"CANLogicInterface$o");
             //msgreport();
         }
         //display update
-        framesrcvd=messages_received;
-        framesent=frame_sent;
+        framesrcvd=this->getParentModule()->par("messages_received").intValue();
+        framesent=this->getParentModule()->par("frame_sent").intValue();
+        errorsdetected=this->getParentModule()->par("errors_received").intValue();
         char buf[40];
-        sprintf(buf, "rcvd: %ld sent: %ld", framesrcvd, framesent);
+        sprintf(buf, "rcvd: %ld sent: %ld error: %ld", framesrcvd, framesent,errorsdetected);
         getParentModule()->getDisplayString().setTagArg("t",0,buf);
     }
     //if we received a message from outside to go in
@@ -263,7 +262,7 @@ void CANLogic::handleMessage(cMessage *msg) {
         cMessage *bitwise = new cMessage("");
         const char *name=msg->getName();
         //we should forward them to the sink
-        if ((strcmp(name,"resessive")==0) and (strcmp(name,"dominant")==0))
+        if ((strcmp(name,"resessive")==0) or (strcmp(name,"dominant")==0))
         {
             bitwise->setName("Success");
         }

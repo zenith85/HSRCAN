@@ -17,9 +17,12 @@ package hsrcan.CAN_inThe_Shell;
 
 module CANshell
 {
-    @display("bgb=950,300,white;i=block/ifcard;bgi=background/CANfullframe");
+    @display("bgb=950,365,white;i=block/ifcard;bgi=background/CANfullframe");
     bool Sender; // this parameter should be changed in the NED to deicde if send or not
     int ID;// this is the ID number of the node
+    int messages_received = 0;
+    int frame_sent = 0;
+    int errors_received = 0;
     gates:
         //these are the gates of the parents the shell
         //input CAN_phy_in;
@@ -89,7 +92,7 @@ module CANshell
 
     submodules:
         canLogic: CANLogic {
-            @display("p=867,230");
+            @display("p=867,279");
         }
         arbiter: Arbiter {
             @display("p=146,171");
@@ -107,14 +110,14 @@ module CANshell
             @display("p=867,171");
         }
         sink: SINK {
-            @display("p=718,230");
+            @display("p=711,279");
         }
     connections:
         arbiter.Arbiter_out --> control.Control_in;
         control.Control_out --> data.Data_in;
         data.Data_out --> crc.CRC_in;
         crc.CRC_out --> ender.Ender_in;
-        ender.Ender_out --> canLogic.CANlogic_inbound_in;
+        ender.Ender_out --> {  delay = 5ms; } --> canLogic.CANlogic_inbound_in;
         //canLogic.CANlogic_outbound_out --> CAN_phy_out;
         //CAN_phy_in --> canLogic.CANlogic_outbound_in;
         canLogic.CANlogic_inbound_out --> sink.SINK_in;

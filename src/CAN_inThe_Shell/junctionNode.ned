@@ -14,40 +14,14 @@
 // 
 
 package hsrcan.CAN_inThe_Shell;
-//
-// TODO documentation
-//
-module CANBus
-{
-    @display("i=block/transport;bgb=319,269");
-    //@display("t=CAN BUS");
 
-    //@display("t=Packets sent: 18;tt=Additional tooltip information");
-	//@display("t=0");
-    int BER;
+//
+// TODO auto-generated module
+//
+simple JunctionNode
+{
+    @display("i=block/socket,cyan;is=vs");
     double Delay;
     gates:
-
-        inout CANBus_inout[];
-
-    types:
-        simple SimpCANBus
-        {
-            @display("i=block/layer");
-            gates:
-                inout SCANB_interface[];
-        }
-
-    submodules:
-
-        simpcanbus: SimpCANBus {
-            @display("p=153,109");
-        }
-    connections:
-        for i=0..sizeof(CANBus_inout)-1 {
-            simpcanbus.SCANB_interface++ <--> {  delay = 5ms; } <--> CANBus_inout[i];
-        }
-
-
+        inout JunctionInterface[];
 }
-
