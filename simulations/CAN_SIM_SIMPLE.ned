@@ -16,6 +16,7 @@
 package hsrcan.simulations;
 import hsrcan.CAN_inThe_Shell.CANBus;
 import hsrcan.CAN_inThe_Shell.CANshell;
+import ned.IUnidirectionalChannel;
 
 
 //
@@ -26,20 +27,32 @@ network CAN_SIM_SIMPLE
     @display("bgb=680,459");
     submodules:
         caNshell: CANshell {
-            @display("p=553,197");
+            @display("p=397,221");
             Sender = true;
             ID = 1;
         }
         caNshell1: CANshell {
-            @display("p=170,200");
+            @display("p=289,135");
             Sender = false;
             ID = 2;
         }
         canBus: CANBus {
-            @display("p=356,199");
+            @display("p=289,221");
+        }
+        caNshell2: CANshell {
+            @display("p=190,221");
+            Sender = false;
+            ID = 8;
+        }
+        caNshell3: CANshell {
+            @display("p=289,321");
+            Sender = false;
+            ID = 5;
         }
     connections:
         caNshell.phy_interface <--> canBus.CANBus_inout++;
         caNshell1.phy_interface <--> canBus.CANBus_inout++;
+        caNshell3.phy_interface <--> canBus.CANBus_inout++;
+        caNshell2.phy_interface <--> canBus.CANBus_inout++;
 }
 

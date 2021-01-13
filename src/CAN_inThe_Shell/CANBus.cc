@@ -25,11 +25,12 @@ protected:
 
 class SimpCANBus: public cSimpleModule
 {
-    int broadcasted_signal=0;
-    int received=0;
+    long Errors;
+    long broadcasted_signal=0;
+    long received=0;
     double delayvalue=0.03;
 protected:
-    virtual void initialize();
+    virtual void initialize() override;
     void handleMessage(cMessage *msg) override;
 };
 
@@ -38,6 +39,8 @@ Define_Module(SimpCANBus);
 
 void SimpCANBus::initialize()
 {
+    Errors=0;
+
     // if the delay value is not identified, then it will be 0.03 otherwise it will take the value of the delay itself
     if (this->getParentModule()->par("Delay").doubleValue()!=0)
     {
@@ -57,7 +60,7 @@ void SimpCANBus::handleMessage(cMessage *msg) {
     //bubble("message received");
     //appendix F manual omnet++
     char buf[40];
-    sprintf(buf, "rcvd: %ld BroadCasted: %ld", received, broadcasted_signal);
+    sprintf(buf, "rcvd: %ld BroadCasted: %ld Errors: %ld", received, broadcasted_signal,Errors);
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
 
     //error generation
@@ -71,8 +74,9 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         E=0;
     }
 
-    if (E==5)
+    if (E==1)
     {
+        Errors++;
         msg->setName("Error");
     }
 
@@ -86,6 +90,7 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         sendDelayed(i==k-1 ? msg : msg->dup(),delayvalue, outGateBaseID+i);
         broadcasted_signal+=1;
     }
+
 }
 
 
