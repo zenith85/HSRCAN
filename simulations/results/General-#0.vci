@@ -1,0 +1,29 @@
+file 28380 1611900032                                           
+version 2
+run General-0-20210129-15:00:20-21144
+attr configname General
+attr datetime 20210129-15:00:20
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsf ""
+attr measurement ""
+attr network CAN_SIM_SIMPLE
+attr processid 21144
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+
+vector 0 CAN_SIM_SIMPLE.caNshell.sink "" ETV
+vector 1 CAN_SIM_SIMPLE.caNshell1.sink "" ETV
+vector 2 CAN_SIM_SIMPLE.caNshell3.sink "" ETV
+vector 3 CAN_SIM_SIMPLE.caNshell2.sink "" ETV
+vector 4 CAN_SIM_SIMPLE.caNshell4.sink "" ETV
+0	612 5553 19 3820 1.095 299.095 320 0 0 0 0
+1	6165 5553 20 3821 1.095 299.095 320 0 0 0 0
+2	11718 5553 21 3822 1.095 299.095 320 0 0 0 0
+3	17271 5553 22 3823 1.095 299.095 320 0 0 0 0
+4	22824 5554 23 3824 1.095 299.095 320 0 0 0 0
+

@@ -63,11 +63,11 @@ network CANHSR_SIM_SIMPLE
         }
         hsr_Error_Inducer: HSR_Error_Inducer {
             @display("p=379,251");
-            MsgErrorRate = 50;
+            MsgErrorRate = 10;
         }
         hsr_Error_Inducer1: HSR_Error_Inducer {
             @display("p=274,251");
-            MsgErrorRate = 30;
+            MsgErrorRate = 80;
         }
         hsr_Error_Inducer2: HSR_Error_Inducer {
             @display("p=325,327");

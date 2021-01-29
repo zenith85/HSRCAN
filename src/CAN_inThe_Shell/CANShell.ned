@@ -18,6 +18,7 @@ package hsrcan.CAN_inThe_Shell;
 module CANshell
 {
     @display("bgb=950,365,white;i=block/ifcard;bgi=background/CANfullframe");
+    int NumFrames; // number of frames to be sent
     bool Sender; // this parameter should be changed in the NED to deicde if send or not
     int ID;// this is the ID number of the node
     int messages_received = 0;

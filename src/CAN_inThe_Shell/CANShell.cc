@@ -23,6 +23,8 @@ unsigned char eeof=127;          //End of frame 7 bits                          
 
 //call and use all the omnetpp libraries
 bool ErrorFLag;
+//number of sent to be sent
+int FramesNum;
 class CANphy: public cModule {
 
 protected:
@@ -52,6 +54,15 @@ class SINK: public cSimpleModule {
     int framesent=0;
     int framesrcvd=0;
     int errorsdetected=0;
+private:
+    //statistics
+    //int data;
+    long Statistics_num_received;
+    long Statistics_num_sent;
+    long Statistics_num_errors;
+    cLongHistogram rcvd_stat;
+    cOutVector rcvd_stat_vector;
+
 protected:
     void handleMessage(cMessage *msg) override; //handle whenever message arrive at the node
     void finish() override;
@@ -65,6 +76,8 @@ class CANLogic: public cSimpleModule //cSimplemodule is the base class and Node 
 private:
     cMessage *event;
     cMessage *comMsg;
+
+
 public:
     CANLogic();
     virtual~CANLogic();
@@ -140,6 +153,10 @@ void SINK::handleMessage(cMessage *msg) {
     //how many messages are received
     if (strcmp(msg->getName(),"Success")==0)
     {
+        //statist
+        rcvd_stat_vector.record(data);
+        rcvd_stat.collect(data);
+
         //messages_received+=1;
         this->getParentModule()->par("messages_received").setIntValue(this->getParentModule()->par("messages_received").intValue()+1);
     }else
@@ -200,7 +217,7 @@ void CANLogic::initialize() {
     //        comMsg=new cMessage("comMsg");
     //        scheduleAt(5, event);
     //    }
-
+    FramesNum=this->getParentModule()->par("NumFrames").intValue();
     char buf[40];
     sprintf(buf, "rcvd: %ld sent: %ld error: %ld", framesrcvd, framesent,errorsdetected);
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
@@ -224,6 +241,9 @@ void CANLogic::initialize() {
 
 void CANLogic::handleMessage(cMessage *msg)
 {
+    if (FramesNum==0){
+        return;
+    }
 
     if (strcmp(msg->getName(),"inside_msg")==0)
     {
@@ -302,7 +322,16 @@ void CANLogic::handleMessage(cMessage *msg)
         }else
         {
             //cancelAndDelete(event);
-            bufferwalker=0;
+            if (FramesNum>0)
+            {
+                FramesNum--;
+                bufferwalker=0;
+                scheduleAt(simTime()+1, event);
+            }else
+            {
+                bufferwalker=0;
+            }
+
         }
         //display update
         framesent=this->getParentModule()->par("frame_sent").intValue();
