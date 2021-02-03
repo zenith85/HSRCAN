@@ -56,12 +56,12 @@ class SINK: public cSimpleModule {
     int errorsdetected=0;
 private:
     //statistics
-    //int data;
-    long Statistics_num_received;
-    long Statistics_num_sent;
-    long Statistics_num_errors;
-    cLongHistogram rcvd_stat;
-    cOutVector rcvd_stat_vector;
+    //cLongHistogram rcvd_stat;
+    //cOutVector rcvd_stat_vector;
+    cLongHistogram suc_stat;
+    cOutVector suc_stat_vector;
+    cLongHistogram err_stat;
+    cOutVector err_stat_vector;
 
 protected:
     void handleMessage(cMessage *msg) override; //handle whenever message arrive at the node
@@ -150,17 +150,23 @@ void Ender::handleMessage(cMessage *msg) {
 
 }
 void SINK::handleMessage(cMessage *msg) {
+    //statist
+    //rcvd_stat_vector.record(data);
+    //rcvd_stat.collect(data);
     //how many messages are received
     if (strcmp(msg->getName(),"Success")==0)
     {
         //statist
-        rcvd_stat_vector.record(data);
-        rcvd_stat.collect(data);
+        suc_stat_vector.record(framesrcvd);
+        suc_stat.collect(framesrcvd);
 
         //messages_received+=1;
         this->getParentModule()->par("messages_received").setIntValue(this->getParentModule()->par("messages_received").intValue()+1);
     }else
     {
+        //statist
+       // err_stat_vector.record(errorsdetected);
+       // err_stat.collect(errorsdetected);
         //errors_received+=1;
         ErrorFLag=true;
         this->getParentModule()->par("errors_received").setIntValue(this->getParentModule()->par("errors_received").intValue()+1);
@@ -178,6 +184,7 @@ void SINK::handleMessage(cMessage *msg) {
 }
 void SINK::finish()
 {
+    //suc_stat.record();
     EV<<"Messages received by ";
     EV<<this->getParentModule()->getName();
     EV<<"(";

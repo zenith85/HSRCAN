@@ -27,38 +27,20 @@ network CAN_SIM_SIMPLE
     @display("bgb=680,459");
     submodules:
         caNshell: CANshell {
-            @display("p=558,214");
+            @display("p=452,221");
             Sender = true;
             ID = 1;
-        }
-        caNshell1: CANshell {
-            @display("p=223,106");
-            Sender = false;
-            ID = 2;
         }
         canBus: CANBus {
             @display("p=289,221");
         }
-        caNshell2: CANshell {
-            @display("p=190,221");
-            Sender = false;
-            ID = 8;
-        }
         caNshell3: CANshell {
-            @display("p=289,321");
+            @display("p=140,221");
             Sender = false;
             ID = 5;
         }
-        caNshell4: CANshell {
-            @display("p=397,96");
-            Sender = false;
-            ID = 50;
-        }
     connections:
         caNshell.phy_interface <--> canBus.CANBus_inout++;
-        caNshell1.phy_interface <--> canBus.CANBus_inout++;
         caNshell3.phy_interface <--> canBus.CANBus_inout++;
-        caNshell2.phy_interface <--> canBus.CANBus_inout++;
-        caNshell4.phy_interface <--> canBus.CANBus_inout++;
 }
 

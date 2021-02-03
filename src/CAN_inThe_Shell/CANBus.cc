@@ -28,7 +28,7 @@ class SimpCANBus: public cSimpleModule
     long Errors;
     long broadcasted_signal=0;
     long received=0;
-    double delayvalue=0.03;
+    double delayvalue=0.000008;
 protected:
     virtual void initialize() override;
     void handleMessage(cMessage *msg) override;
@@ -64,6 +64,10 @@ void SimpCANBus::handleMessage(cMessage *msg) {
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
 
     //error generation
+//    A typical way to generate trivial pseudo-random numbers in a determined range using rand is to use the modulo of the returned value by the range span and add the initial value of the range:
+//    v1 = rand() % 100;         // v1 in the range 0 to 99
+//    v2 = rand() % 100 + 1;     // v2 in the range 1 to 100
+//    v3 = rand() % 30 + 1985;   // v3 in the range 1985-2014
     int geterr=this->getParentModule()->par("BER");
     int E;
     if (geterr!=0)
@@ -74,7 +78,7 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         E=0;
     }
 
-    if (E==1)
+    if (E==100)
     {
         Errors++;
         msg->setName("Error");
