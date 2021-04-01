@@ -80,37 +80,44 @@ void SimpCANtoHSR::handleMessage(cMessage *msg) {
     //execute code if we receive from first interface
     if ((strcmp(msg->getArrivalGate()->getName(), "HSRside_1$i")==0) and (strcmp(HSRmsg->par("NodeID"),getParentModule()->par("NodeID"))!=0))
     {
-        if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received_from_A)
+        //if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received_from_A)
+        if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received)
         {
             frame_counter_received_from_A=HSRmsg->par("SQ_NUM").doubleValue();
-            send(HSRmsg->dup(), "HSRside_2$o");
+            //send(HSRmsg->dup(), "HSRside_2$o"); //send from the other path remove for QR implementation
 
             if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received)
             {
-                frame_counter_received++;
+                //frame_counter_received++;//we should make this counter equal to the frame sq number
+                frame_counter_received=HSRmsg->par("SQ_NUM").doubleValue();
                 framesrcvd_if_A=framesrcvd_if_A+1;
                 send(HSRmsg->dup(), "CANside$o");
             }
         }else
         {
             //do nothing
+            delete msg;
         }
     }
     //execute code if we receive from second interface
     if ((strcmp(msg->getArrivalGate()->getName(), "HSRside_2$i")==0) and (strcmp(HSRmsg->par("NodeID"),getParentModule()->par("NodeID"))!=0))
     {
-        if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received_from_B)
+        //if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received_from_B)
+        if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received)
         {
-            send(HSRmsg->dup(), "HSRside_1$o");
+            frame_counter_received_from_B=HSRmsg->par("SQ_NUM").doubleValue();
+            //send(HSRmsg->dup(), "HSRside_1$o");//send this from the other side removed for QR implementation
 
             if (HSRmsg->par("SQ_NUM").doubleValue()>frame_counter_received)
             {
-                frame_counter_received++;
+                //frame_counter_received++;
+                frame_counter_received=HSRmsg->par("SQ_NUM").doubleValue();
                 framesrcvd_if_B=framesrcvd_if_B+1;
                 send(HSRmsg->dup(), "CANside$o");
             }
         }else
         {
+            delete msg;
             //do nothing
         }
     }

@@ -78,7 +78,7 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         E=0;
     }
 
-    if (E==100)
+    if (E==3)
     {
         Errors++;
         msg->setName("Error");

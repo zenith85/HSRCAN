@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <omnetpp.h>
+#include <time.h>
 
 using namespace omnetpp;
 
@@ -25,6 +26,7 @@ using namespace omnetpp;
 
 class HSR_Error_Inducer: public cSimpleModule
 {
+    int BER=0;
     long Errors;
 protected:
     virtual void initialize() override;
@@ -40,23 +42,51 @@ void HSR_Error_Inducer::initialize()
     char buf[40];
      sprintf(buf, "Errors Induced: %ld", Errors);
     this->getDisplayString().setTagArg("t",0,buf);
+
+
 }
 
 void HSR_Error_Inducer::handleMessage(cMessage *msg) {
 
-    //error generation
-        int geterr=this->par("MsgErrorRate");
-        int E;
-        if (geterr!=0)
-        {
-            E=rand()%geterr;
-        }else
-        {
-            E=0;
-        }
 
-        if (E==1)
+//            struct timeval tv;
+//            gettimeofday(&tv,NULL);
+//           // unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;//find the microseconds for seeding srand()
+//            unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;//find the microseconds for seeding srand()
+//            srand(time_in_micros);
+
+        int geterr=this->par("MsgErrorRate");
+        int equivlinks=this->par("EquivLinks");
+        //EV<<"geterr is ";
+        //EV<<geterr;
+        int E;
+        if (geterr==0)
         {
+            E=0;//case of no errors
+        }
+//        else if (geterr==1)
+//        {
+//            E=1;//case of all errors
+//        }
+        else
+        {
+            E=rand()%(geterr);
+            EV<<this->getName();
+            EV<<" rnd value =";
+            EV<<E;
+
+        }
+        //if ((E==(geterr)/2)&&geterr!=0) //best case scenario seed pick
+
+        //fixed destribution
+//        if (BER>(geterr*geterr)){BER=0;}
+//        BER=BER+1;
+//        EV<<BER;
+//        if ((BER==((geterr*geterr)/2)))
+
+        if (((E==geterr/2)&&geterr!=0)||E==1) //worst case scenario seed pick
+        {
+            EV<<"Error induced";
             Errors++;
             delete msg;
         }else
@@ -74,5 +104,6 @@ void HSR_Error_Inducer::handleMessage(cMessage *msg) {
         this->getDisplayString().setTagArg("t",0,buf);
 
 }
+
 
 

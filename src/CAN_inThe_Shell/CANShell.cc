@@ -248,6 +248,7 @@ void CANLogic::initialize() {
 
 void CANLogic::handleMessage(cMessage *msg)
 {
+   // srand(time(0));//this line for hsr_error_inducer
     if (FramesNum==0){
         return;
     }
