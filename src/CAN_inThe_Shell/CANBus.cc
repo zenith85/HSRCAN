@@ -63,6 +63,15 @@ void SimpCANBus::handleMessage(cMessage *msg) {
     sprintf(buf, "rcvd: %ld BroadCasted: %ld Errors: %ld", received, broadcasted_signal,Errors);
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
 
+    //              seed resetter
+                //struct timeval tv;
+                //gettimeofday(&tv,NULL);
+               // unsigned long time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;//find the microseconds for seeding srand()
+                //unsigned long time_in_micros = 1000000000 * tv.tv_sec + tv.tv_usec;//find the microseconds for seeding srand()
+                //srand(time_in_micros);
+
+
+
     //error generation
 //    A typical way to generate trivial pseudo-random numbers in a determined range using rand is to use the modulo of the returned value by the range span and add the initial value of the range:
 //    v1 = rand() % 100;         // v1 in the range 0 to 99
@@ -78,22 +87,28 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         E=0;
     }
 
-    if (E==3)
+    if (E==(geterr/2))
     {
         Errors++;
         msg->setName("Error");
+        delete(msg);
+
+    }else
+    {
+        //page 79 doc.omnetpp.org/omnetpp4/manual.pdf [broadcasting messages]
+        received+=1;
+        int k=this->gateCount()/2;
+        int outGateBaseID=gateBaseId("SCANB_interface$o");
+        for (int i=0; i<k;i++)
+        {
+            //send(i==k-1 ? msg : msg->dup(), outGateBaseID+i);
+            sendDelayed(i==k-1 ? msg : msg->dup(),delayvalue, outGateBaseID+i);
+            broadcasted_signal+=1;
+        }
     }
 
-    //page 79 doc.omnetpp.org/omnetpp4/manual.pdf [broadcasting messages]
-    received+=1;
-    int k=this->gateCount()/2;
-    int outGateBaseID=gateBaseId("SCANB_interface$o");
-    for (int i=0; i<k;i++)
-    {
-        //send(i==k-1 ? msg : msg->dup(), outGateBaseID+i);
-        sendDelayed(i==k-1 ? msg : msg->dup(),delayvalue, outGateBaseID+i);
-        broadcasted_signal+=1;
-    }
+
+
 
 }
 
