@@ -48,17 +48,19 @@ network CANHSR_SIM_SIMPLE
         }
         caNshell2: CANshell {
             @display("p=552.30774,90");
-            NumFrames = 50000;
+            NumFrames = 5000;
             Sender = false;
             ID = 3;
         }
         hsr_Error_Inducer11: HSR_Error_Inducer {
             @display("p=763.04,303.20798");
+            EOT = true;
             EquivLinks = 1;
 
         }
         hsr_Error_Inducer13: HSR_Error_Inducer {
-            @display("p=355.416,349.392");
+            @display("p=327.304,303.20798");
+            EOT = false;
             EquivLinks = 1;
 
         }

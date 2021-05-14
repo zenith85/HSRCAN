@@ -21,6 +21,7 @@ package hsrcan.CAN_inThe_Shell;
 simple HSR_Error_Inducer
 {
     @display("i=block/plug,cyan;is=s");
+    bool EOT;
     int EquivLinks;
     int MsgErrorRate;
     gates:

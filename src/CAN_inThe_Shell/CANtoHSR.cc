@@ -33,10 +33,15 @@ class SimpCANtoHSR: public cSimpleModule
 private:
     cMessage *event;
     cMessage *HSRmsg;
+    long long data=0;
     double frame_counter=0;
     double frame_counter_received=0;
     double frame_counter_received_from_A=0;
     double frame_counter_received_from_B=0;
+    cLongHistogram Arcvd;
+    cOutVector ArcvdV;
+    cLongHistogram Brcvd;
+    cOutVector BrcvdV;
 public:
     SimpCANtoHSR();
     virtual~SimpCANtoHSR();
@@ -92,12 +97,15 @@ void SimpCANtoHSR::handleMessage(cMessage *msg) {
                 frame_counter_received=HSRmsg->par("SQ_NUM").doubleValue();
                 framesrcvd_if_A=framesrcvd_if_A+1;
                 send(HSRmsg->dup(), "CANside$o");
+
             }
+
         }else
         {
             //do nothing
             delete msg;
         }
+
     }
     //execute code if we receive from second interface
     if ((strcmp(msg->getArrivalGate()->getName(), "HSRside_2$i")==0) and (strcmp(HSRmsg->par("NodeID"),getParentModule()->par("NodeID"))!=0))
@@ -114,17 +122,24 @@ void SimpCANtoHSR::handleMessage(cMessage *msg) {
                 frame_counter_received=HSRmsg->par("SQ_NUM").doubleValue();
                 framesrcvd_if_B=framesrcvd_if_B+1;
                 send(HSRmsg->dup(), "CANside$o");
+
             }
+
         }else
         {
             delete msg;
             //do nothing
         }
+
     }
 
     char buf[40];
     sprintf(buf, "IF_A: %ld --- IF_B: %ld", framesrcvd_if_A, framesrcvd_if_B);
     getParentModule()->getDisplayString().setTagArg("t",0,buf);
+    ArcvdV.record(framesrcvd_if_A);
+    Arcvd.collect(framesrcvd_if_A);
+    BrcvdV.record(framesrcvd_if_B);
+    Brcvd.collect(framesrcvd_if_B);
 }
 
 

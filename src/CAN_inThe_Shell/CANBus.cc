@@ -1,7 +1,7 @@
 /*
  * CANBus.cc
  *
- *  Created on: Apr 9, 2021
+ *  Created on: Dec 8, 2020
  *      Author: ibrah
  */
 
@@ -77,6 +77,7 @@ void SimpCANBus::handleMessage(cMessage *msg) {
 //    v1 = rand() % 100;         // v1 in the range 0 to 99
 //    v2 = rand() % 100 + 1;     // v2 in the range 1 to 100
 //    v3 = rand() % 30 + 1985;   // v3 in the range 1985-2014
+    bool amiwrong=this->getParentModule()->par("EOT");
     int geterr=this->getParentModule()->par("BER");
     int E;
     if (geterr!=0)
@@ -87,7 +88,20 @@ void SimpCANBus::handleMessage(cMessage *msg) {
         E=0;
     }
 
-    if (E==(geterr/2))
+    if (simTime()>150000 && simTime()<350000)
+    {
+        if (amiwrong==true)
+        {
+            EV<<"SIMTIMER  is ";
+            EV<<simTime();
+            EV<<"EEEEEEEEEEE  is ";
+            E=1;
+            EV<<E;
+        }
+
+    }
+
+    if (((E==geterr/2)&&geterr!=0)||E==1)
     {
         Errors++;
         msg->setName("Error");

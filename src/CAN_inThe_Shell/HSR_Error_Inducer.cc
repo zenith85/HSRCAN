@@ -49,19 +49,24 @@ void HSR_Error_Inducer::initialize()
 void HSR_Error_Inducer::handleMessage(cMessage *msg) {
 
 
+
+
         int geterr=this->par("MsgErrorRate");
         int equivlinks=this->par("EquivLinks");
+        bool amiwrong=this->par("EOT");
         //EV<<"geterr is ";
         //EV<<geterr;
         int E;
+
+
             if (geterr==0)
             {
                 E=0;//case of no errors
             }
-    //        else if (geterr==1)
-    //        {
-    //            E=1;//case of all errors
-    //        }
+            else if (geterr==1)
+            {
+                E=1;//case of all errors
+            }
             else
             {
                 E=rand()%(geterr);
@@ -70,6 +75,20 @@ void HSR_Error_Inducer::handleMessage(cMessage *msg) {
                 EV<<E;
 
             }
+
+            if (simTime()>150000 && simTime()<350000)
+            {
+                if (amiwrong==true)
+                {
+                    EV<<"SIMTIMER  is ";
+                    EV<<simTime();
+                    EV<<"EEEEEEEEEEE  is ";
+                    E=1;
+                    EV<<E;
+                }
+
+            }
+
             //if ((E==(geterr)/2)&&geterr!=0) //best case scenario seed pick
 
             //fixed destribution
@@ -96,11 +115,16 @@ void HSR_Error_Inducer::handleMessage(cMessage *msg) {
               //  break;
             }
 
+
+
+
+
         char buf[40];
          sprintf(buf, "Errors Induced: %ld", Errors);
         this->getDisplayString().setTagArg("t",0,buf);
 
 }
+
 
 
 

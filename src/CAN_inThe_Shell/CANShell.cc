@@ -56,8 +56,8 @@ class SINK: public cSimpleModule {
     int errorsdetected=0;
 private:
     //statistics
-    //cLongHistogram rcvd_stat;
-    //cOutVector rcvd_stat_vector;
+    cLongHistogram rcvd_stat;
+    cOutVector rcvd_stat_vector;
     cLongHistogram suc_stat;
     cOutVector suc_stat_vector;
     cLongHistogram err_stat;
@@ -151,8 +151,8 @@ void Ender::handleMessage(cMessage *msg) {
 }
 void SINK::handleMessage(cMessage *msg) {
     //statist
-    //rcvd_stat_vector.record(data);
-    //rcvd_stat.collect(data);
+    rcvd_stat_vector.record(data);
+    rcvd_stat.collect(data);
     //how many messages are received
     if (strcmp(msg->getName(),"Success")==0)
     {
@@ -260,7 +260,7 @@ void CANLogic::handleMessage(cMessage *msg)
         {
             cancelEvent(event);
         }
-        scheduleAt(simTime()+1, event);
+        scheduleAt(simTime()+0.0001, event);
     }
     if (msg==event) //here is the selfmsg that tell us to send after (t-1)
     {
@@ -334,7 +334,7 @@ void CANLogic::handleMessage(cMessage *msg)
             {
                 FramesNum--;
                 bufferwalker=0;
-                scheduleAt(simTime()+1, event);
+                scheduleAt(simTime()+0.0001, event);
             }else
             {
                 bufferwalker=0;

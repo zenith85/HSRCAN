@@ -24,6 +24,7 @@ module CANBus
 
     //@display("t=Packets sent: 18;tt=Additional tooltip information");
 	//@display("t=0");
+    bool EOT;
     int BER;
     double Delay;
     gates:

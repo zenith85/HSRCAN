@@ -32,7 +32,7 @@ network CAN_SIM_SIMPLE
             ID = 1;
         }
         canBus: CANBus {
-            @display("p=289,221");
+            @display("p=296,221");
         }
         caNshell3: CANshell {
             @display("p=140,221");
